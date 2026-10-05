@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -57,10 +58,6 @@
       font-weight: bold;
     }
 
-    button:hover {
-      opacity: .9;
-    }
-
     .logout {
       background: #777;
     }
@@ -100,8 +97,10 @@
       text-align: center;
       font-weight: bold;
       margin: 10px 0;
+      white-space: pre-line;
     }
   </style>
+
 </head>
 
 <body>
@@ -113,59 +112,62 @@
   <div id="loginBox" class="box">
     <h2>ورود مدیر</h2>
 
-    <input id="email" type="email" placeholder="ایمیل">
-    <input id="password" type="password" placeholder="رمز عبور">
+```
+<input id="email" type="email" placeholder="ایمیل">
+<input id="password" type="password" placeholder="رمز عبور">
 
-    <button onclick="login()">ورود</button>
+<button onclick="login()">ورود</button>
 
-    <div id="message"></div>
+<div id="message"></div>
+```
+
   </div>
-
 
   <div id="adminPanel">
 
-    <div class="box">
-      <h2>افزودن محصول جدید</h2>
+```
+<div class="box">
+  <h2>افزودن محصول جدید</h2>
 
-      <input id="name" placeholder="نام محصول">
-      <textarea id="description" placeholder="توضیحات محصول"></textarea>
-      <input id="price" placeholder="قیمت، مثلاً 3.600.000 تومان">
-      <input id="image" placeholder="آدرس عکس محصول">
+  <input id="name" placeholder="نام محصول">
+  <textarea id="description" placeholder="توضیحات محصول"></textarea>
+  <input id="price" placeholder="قیمت، مثلاً 3.600.000 تومان">
+  <input id="image" placeholder="آدرس عکس محصول">
 
-      <label>
-        <input id="available" type="checkbox" checked>
-        محصول موجود است
-      </label>
+  <label>
+    <input id="available" type="checkbox" checked>
+    محصول موجود است
+  </label>
 
-      <button onclick="addProduct()">➕ افزودن محصول</button>
+  <button onclick="addProduct()">➕ افزودن محصول</button>
+</div>
 
-      <div id="productMessage"></div>
-    </div>
+<div class="box">
+  <h2>محصولات فروشگاه</h2>
+  <div id="products"></div>
+</div>
 
-
-    <div class="box">
-      <h2>محصولات فروشگاه</h2>
-      <div id="products"></div>
-    </div>
-
-    <div class="box">
-      <button class="logout" onclick="logout()">خروج از حساب</button>
-    </div>
+<div class="box">
+  <button class="logout" onclick="logout()">خروج از حساب</button>
+</div>
+```
 
   </div>
 
 </div>
 
-
 <script>
 
-const SUPABASE_URL = "https://ajqvnvgjgrxuafxywzcd.supabase.co";
+const SUPABASE_URL =
+  "https://ajqvnvgjgrxuafxywzcd.supabase.co";
 
 /*
-  اینجا باید Publishable Key خودت را قرار بدهی.
-  کلیدی که قبلاً از Supabase کپی کردی را بین دو " قرار بده.
+  اینجا Publishable Key خودت را قرار بده.
+  کلید Secret یا service_role را قرار نده.
 */
-const SUPABASE_KEY = "اینجا کلید Publishable را قرار بده";
+const SUPABASE_KEY =
+  "اینجا Publishable Key خودت را قرار بده";
+
 
 const supabaseClient =
   window.supabase.createClient(
@@ -185,32 +187,56 @@ async function login() {
   const message =
     document.getElementById("message");
 
-  message.textContent = "در حال ورود...";
+  if (!email || !password) {
+    message.textContent =
+      "⚠️ ایمیل و رمز عبور را وارد کن.";
+    return;
+  }
+
+  message.textContent =
+    "⏳ در حال ورود...";
 
   const { data, error } =
     await supabaseClient.auth.signInWithPassword({
-      email,
-      password
+      email: email,
+      password: password
     });
 
   if (error) {
+
+    console.error(error);
+
     message.textContent =
-      "❌ ایمیل یا رمز عبور اشتباه است.";
+      "❌ خطای ورود:\n" +
+      error.message;
+
+    return;
+  }
+
+  if (!data.user) {
+
+    message.textContent =
+      "❌ کاربر پیدا نشد.";
+
     return;
   }
 
   await checkAdmin();
-
 }
 
 
 async function checkAdmin() {
 
   const {
-    data: { user }
+    data: { user },
+    error: userError
   } = await supabaseClient.auth.getUser();
 
-  if (!user) {
+  if (userError || !user) {
+
+    document.getElementById("message").textContent =
+      "❌ ورود انجام نشد.";
+
     return;
   }
 
@@ -221,18 +247,32 @@ async function checkAdmin() {
       .eq("user_id", user.id)
       .maybeSingle();
 
-  if (error || !data) {
+  if (error) {
 
-    await supabaseClient.auth.signOut();
+    console.error(error);
 
     document.getElementById("message").textContent =
-      "❌ این حساب دسترسی مدیریت ندارد.";
+      "❌ خطا در بررسی دسترسی مدیر:\n" +
+      error.message;
 
     return;
   }
 
-  document.getElementById("loginBox").style.display = "none";
-  document.getElementById("adminPanel").style.display = "block";
+  if (!data) {
+
+    await supabaseClient.auth.signOut();
+
+    document.getElementById("message").textContent =
+      "❌ این حساب مدیر نیست.";
+
+    return;
+  }
+
+  document.getElementById("loginBox").style.display =
+    "none";
+
+  document.getElementById("adminPanel").style.display =
+    "block";
 
   loadProducts();
 }
@@ -256,7 +296,9 @@ async function addProduct() {
     document.getElementById("available").checked;
 
   if (!name || !price) {
+
     alert("نام محصول و قیمت را وارد کن.");
+
     return;
   }
 
@@ -273,9 +315,12 @@ async function addProduct() {
 
   if (error) {
 
-    alert("خطا در افزودن محصول:\n" + error.message);
-    return;
+    alert(
+      "خطا در افزودن محصول:\n" +
+      error.message
+    );
 
+    return;
   }
 
   alert("محصول با موفقیت اضافه شد 🌸");
@@ -296,7 +341,9 @@ async function loadProducts() {
     await supabaseClient
       .from("products")
       .select("*")
-      .order("id", { ascending: false });
+      .order("id", {
+        ascending: false
+      });
 
   const container =
     document.getElementById("products");
@@ -304,7 +351,9 @@ async function loadProducts() {
   if (error) {
 
     container.innerHTML =
-      "<p>خطا در دریافت محصولات</p>";
+      "<p>❌ خطا در دریافت محصولات</p>";
+
+    console.error(error);
 
     return;
   }
@@ -327,9 +376,10 @@ async function loadProducts() {
     div.className = "product";
 
     div.innerHTML = `
+
       ${
         product.image
-        ? `<img src="${product.image}" alt="${product.name}">`
+        ? `<img src="${product.image}" alt="">`
         : ""
       }
 
@@ -353,7 +403,8 @@ async function loadProducts() {
           ✏️ ویرایش
         </button>
 
-        <button class="delete"
+        <button
+          class="delete"
           onclick="deleteProduct(${product.id})">
           🗑️ حذف
         </button>
@@ -364,7 +415,6 @@ async function loadProducts() {
     container.appendChild(div);
 
   });
-
 }
 
 
@@ -382,9 +432,12 @@ async function deleteProduct(id) {
 
   if (error) {
 
-    alert("خطا در حذف محصول:\n" + error.message);
-    return;
+    alert(
+      "خطا در حذف محصول:\n" +
+      error.message
+    );
 
+    return;
   }
 
   loadProducts();
@@ -418,9 +471,12 @@ async function editProduct(id) {
 
   if (error) {
 
-    alert("خطا در ویرایش:\n" + error.message);
-    return;
+    alert(
+      "خطا در ویرایش:\n" +
+      error.message
+    );
 
+    return;
   }
 
   loadProducts();
@@ -432,7 +488,6 @@ async function logout() {
   await supabaseClient.auth.signOut();
 
   location.reload();
-
 }
 
 
