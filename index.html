@@ -1,161 +1,207 @@
+```html
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Lunéa | لونیا</title>
+  <meta name="description" content="دسته‌گل‌های مصنوعی، عروسکی و فانتزی Lunéa">
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       font-family: Tahoma, Arial, sans-serif;
-      background: #fff8fb;
-      color: #4a3942;
+      background: #fff8f8;
+      color: #4b2632;
+      line-height: 1.8;
     }
 
     header {
-      text-align: center;
+      background: linear-gradient(135deg, #f8dce5, #fff1f4);
       padding: 45px 20px 35px;
-      background: linear-gradient(135deg, #fce4ec, #fff5f8);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 42px;
-      color: #9b536e;
-      letter-spacing: 1px;
-    }
-
-    header p {
-      margin-top: 10px;
-      font-size: 17px;
-      color: #795866;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 35px 20px;
-    }
-
-    .intro {
       text-align: center;
-      margin-bottom: 35px;
+      border-bottom: 1px solid #efd0d9;
     }
 
-    .intro h2 {
-      color: #9b536e;
+    .logo {
+      font-family: Georgia, serif;
+      font-size: 46px;
+      color: #8d3f59;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: #8b6470;
+      font-size: 15px;
+    }
+
+    .hero {
+      max-width: 900px;
+      margin: 35px auto 20px;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      color: #713247;
+      font-size: 27px;
       margin-bottom: 10px;
     }
 
+    .hero p {
+      color: #80636b;
+      font-size: 15px;
+    }
+
     .products {
+      max-width: 1100px;
+      margin: 35px auto;
+      padding: 0 20px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 22px;
+      gap: 25px;
     }
 
-    .product {
+    .card {
       background: white;
-      border-radius: 20px;
-      padding: 22px;
-      text-align: center;
-      box-shadow: 0 5px 20px rgba(120, 70, 90, 0.10);
-      transition: 0.3s;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(120, 55, 75, 0.10);
+      border: 1px solid #f0dce2;
+      transition: 0.25s ease;
     }
 
-    .product:hover {
+    .card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(120, 55, 75, 0.16);
     }
 
-    .product-image {
+    .image-box {
       width: 100%;
-      height: 210px;
-      border-radius: 16px;
-      background: #fff0f5;
+      height: 280px;
+      background: #fff0f3;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      margin-bottom: 18px;
-      font-size: 75px;
     }
 
-    .product-image img {
+    .image-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
-    .product h3 {
-      margin: 10px 0;
-      color: #87445f;
-      font-size: 20px;
+    .emoji {
+      font-size: 75px;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .card h2 {
+      color: #713247;
+      font-size: 19px;
+      margin-bottom: 8px;
     }
 
     .description {
+      color: #80636b;
       font-size: 14px;
-      line-height: 1.8;
-      color: #76636b;
-      min-height: 50px;
+      min-height: 45px;
+      margin-bottom: 12px;
     }
 
     .price {
-      font-size: 18px;
+      color: #9a3f5d;
+      font-size: 19px;
       font-weight: bold;
-      color: #9b536e;
-      margin: 15px 0;
+      margin-bottom: 15px;
     }
 
     .order-btn {
-      display: inline-block;
+      display: block;
+      width: 100%;
+      text-align: center;
       text-decoration: none;
-      background: #9b536e;
+      background: #8d3f59;
       color: white;
-      padding: 11px 22px;
-      border-radius: 30px;
-      transition: 0.3s;
+      padding: 11px;
+      border-radius: 12px;
+      transition: 0.2s;
     }
 
     .order-btn:hover {
-      background: #793f55;
+      background: #713247;
     }
 
     .about {
-      margin-top: 55px;
-      background: #fff;
-      border-radius: 20px;
-      padding: 30px;
+      max-width: 800px;
+      margin: 55px auto;
+      padding: 30px 25px;
       text-align: center;
-      box-shadow: 0 5px 20px rgba(120, 70, 90, 0.08);
+      background: #fff0f3;
+      border-radius: 25px;
     }
 
     .about h2 {
-      color: #9b536e;
+      color: #713247;
+      margin-bottom: 10px;
+    }
+
+    .about p {
+      color: #80636b;
+      font-size: 15px;
+    }
+
+    .status {
+      max-width: 900px;
+      margin: 25px auto;
+      padding: 15px 20px;
+      text-align: center;
+      color: #80636b;
+    }
+
+    .error {
+      color: #a33d52;
+      background: #fff0f2;
+      border-radius: 15px;
     }
 
     footer {
+      background: #713247;
+      color: #fff;
       text-align: center;
-      padding: 25px;
-      margin-top: 40px;
-      background: #fce4ec;
-      color: #795866;
-      font-size: 14px;
+      padding: 25px 15px;
+      margin-top: 60px;
+      font-size: 13px;
     }
 
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #9b536e;
-    }
+    @media (max-width: 600px) {
+      .logo {
+        font-size: 38px;
+      }
 
-    .empty {
-      text-align: center;
-      padding: 40px;
-      color: #8a6875;
+      .hero h1 {
+        font-size: 23px;
+      }
+
+      .products {
+        grid-template-columns: 1fr;
+      }
+
+      .image-box {
+        height: 300px;
+      }
     }
   </style>
 </head>
@@ -163,34 +209,30 @@
 <body>
 
 <header>
-  <h1>Lunéa</h1>
-  <p>لونیا | دسته‌گل‌های خاص، ظریف و ماندگار 🌷</p>
+  <div class="logo">Lunéa</div>
+  <div class="subtitle">لونیا | دسته‌گل‌هایی برای ماندگار کردن لحظه‌ها</div>
 </header>
 
-<div class="container">
+<section class="hero">
+  <h1>دسته‌گل‌های خاص و دوست‌داشتنی 🌷</h1>
+  <p>
+    انتخابی ظریف برای هدیه دادن، خاطره ساختن و خوشحال کردن عزیزانت
+  </p>
+</section>
 
-  <section class="intro">
-    <h2>دسته‌گل‌های لونیا</h2>
-    <p>
-      دسته‌گل‌های مصنوعی، عروسکی و فانتزی برای هدیه دادن و ساختن لحظه‌های خاص 💕
-    </p>
-  </section>
-
-  <section id="products" class="products">
-    <div class="loading">
-      در حال بارگذاری محصولات...
-    </div>
-  </section>
-
-  <section class="about">
-    <h2>درباره Lunéa</h2>
-    <p>
-      در لونیا تلاش می‌کنیم دسته‌گل‌هایی خاص، زیبا و ماندگار بسازیم؛
-      انتخابی دوست‌داشتنی برای هدیه، مناسبت‌های خاص و دکور اتاق 🌸
-    </p>
-  </section>
-
+<div id="status" class="status">
+  در حال بارگذاری محصولات...
 </div>
+
+<section id="products" class="products"></section>
+
+<section class="about">
+  <h2>درباره Lunéa ✨</h2>
+  <p>
+    در Lunéa دسته‌گل‌های مصنوعی، عروسکی و فانتزی با عشق انتخاب می‌شوند
+    تا هدیه‌ای زیبا، ماندگار و متفاوت برای عزیزانتان باشند.
+  </p>
+</section>
 
 <footer>
   © 2026 Lunéa | لونیا
@@ -198,302 +240,241 @@
 
 <script>
 
-  /* =========================
-     تنظیمات سایت
-     ========================= */
+const CONFIG = {
 
-  const CONFIG = {
+  sheetCsvUrl:
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9z3VP62PhTXCAIJb75IrQ2TMD0uWGC5bRt8O3a0nn29qg-NPMrWBKERhKgimIL648xVy9ij6DANfP/pub?output=csv",
 
-    sheetCsvUrl:
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9z3VP62PhTXCAIJb75IrQ2TMD0uWGC5bRt8O3a0nn29qg-NPMrWBKERhKgimIL648xVy9ij6DANfP/pub?output=csv",
+  whatsapp: "989000000000"
 
-    whatsapp: "989000000000"
-
-  };
+};
 
 
-  /* =========================
-     محصولات پیش‌فرض
-     ========================= */
+// تبدیل لینک‌های GitHub به لینک مستقیم عکس
+function normalizeImageUrl(url) {
 
-  const fallbackProducts = [
+  if (!url) return "";
 
-    {
-      name: "دسته‌گل عروسکی صورتی",
-      description: "فانتزی و ظریف، مناسب هدیه",
-      price: "390000 تومان",
-      image: "🌷"
-    },
+  url = url.trim();
 
-    {
-      name: "دسته‌گل خرسی",
-      description: "بامزه و ماندگار",
-      price: "450000 تومان",
-      image: "🧸"
-    },
+  // اگر لینک به صورت Markdown باشد
+  const markdownMatch = url.match(/\((https?:\/\/[^)]+)\)/);
 
-    {
-      name: "دسته‌گل فانتزی",
-      description: "خاص و دوست‌داشتنی برای هدیه",
-      price: "350000 تومان",
-      image: "💐"
+  if (markdownMatch) {
+    url = markdownMatch[1];
+  }
+
+  // تبدیل GitHub Blob به Raw
+  const githubMatch = url.match(
+    /^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/
+  );
+
+  if (githubMatch) {
+
+    const owner = githubMatch[1];
+    const repo = githubMatch[2];
+    const path = githubMatch[3];
+
+    return `https://raw.githubusercontent.com/${owner}/${repo}/${path}`;
+  }
+
+  return url;
+}
+
+
+// CSV parser مقاوم‌تر
+function parseCSV(text) {
+
+  const rows = [];
+  let row = [];
+  let value = "";
+  let insideQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (char === '"' && insideQuotes && next === '"') {
+      value += '"';
+      i++;
     }
 
-  ];
+    else if (char === '"') {
+      insideQuotes = !insideQuotes;
+    }
 
+    else if (char === "," && !insideQuotes) {
+      row.push(value.trim());
+      value = "";
+    }
 
-  /* =========================
-     تبدیل CSV به اطلاعات
-     ========================= */
+    else if ((char === "\n" || char === "\r") && !insideQuotes) {
 
-  function parseCSV(text) {
-
-    const rows = [];
-    let row = [];
-    let cell = "";
-    let insideQuotes = false;
-
-    for (let i = 0; i < text.length; i++) {
-
-      const char = text[i];
-      const next = text[i + 1];
-
-      if (char === '"' && insideQuotes && next === '"') {
-        cell += '"';
+      if (char === "\r" && next === "\n") {
         i++;
       }
 
-      else if (char === '"') {
-        insideQuotes = !insideQuotes;
-      }
+      row.push(value.trim());
 
-      else if (char === "," && !insideQuotes) {
-        row.push(cell);
-        cell = "";
-      }
-
-      else if ((char === "\n" || char === "\r") && !insideQuotes) {
-
-        if (char === "\r" && next === "\n") {
-          i++;
-        }
-
-        row.push(cell);
-        cell = "";
-
-        if (row.some(value => value.trim() !== "")) {
-          rows.push(row);
-        }
-
-        row = [];
-      }
-
-      else {
-        cell += char;
-      }
-    }
-
-    if (cell !== "" || row.length > 0) {
-      row.push(cell);
-
-      if (row.some(value => value.trim() !== "")) {
+      if (row.some(cell => cell !== "")) {
         rows.push(row);
       }
+
+      row = [];
+      value = "";
     }
 
-    if (rows.length === 0) {
-      return [];
+    else {
+      value += char;
     }
+  }
 
-    const headers = rows[0].map(header =>
-      header.trim().toLowerCase()
-    );
+  if (value !== "" || row.length > 0) {
 
-    return rows.slice(1).map(values => {
+    row.push(value.trim());
 
-      const product = {};
+    if (row.some(cell => cell !== "")) {
+      rows.push(row);
+    }
+  }
 
-      headers.forEach((header, index) => {
-        product[header] = (values[index] || "").trim();
-      });
+  if (rows.length === 0) return [];
 
-      return product;
+  const headers = rows[0].map(h =>
+    h.toLowerCase().trim()
+  );
 
+  return rows.slice(1).map(row => {
+
+    const item = {};
+
+    headers.forEach((header, index) => {
+      item[header] = row[index] || "";
     });
 
+    return item;
+
+  });
+}
+
+
+// بررسی موجودی
+function isAvailable(value) {
+
+  const v = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  return ![
+    "خیر",
+    "no",
+    "false",
+    "0",
+    "ناموجود"
+  ].includes(v);
+}
+
+
+// نمایش محصولات
+function renderProducts(products) {
+
+  const container = document.getElementById("products");
+  const status = document.getElementById("status");
+
+  container.innerHTML = "";
+
+  const availableProducts = products.filter(product =>
+    isAvailable(product.available)
+  );
+
+  if (availableProducts.length === 0) {
+
+    status.textContent =
+      "فعلاً محصولی برای نمایش ثبت نشده است.";
+
+    return;
   }
 
+  status.textContent = "";
 
-  /* =========================
-     نمایش محصولات
-     ========================= */
+  availableProducts.forEach(product => {
 
-  function renderProducts(products) {
+    const card = document.createElement("article");
+    card.className = "card";
 
-    const container = document.getElementById("products");
+    const imageUrl =
+      normalizeImageUrl(product.image);
 
-    if (!products || products.length === 0) {
+    const imageBox =
+      document.createElement("div");
 
-      container.innerHTML = `
-        <div class="empty">
-          هنوز محصولی ثبت نشده است 🌸
-        </div>
-      `;
+    imageBox.className = "image-box";
 
-      return;
-    }
+    if (imageUrl) {
 
-    container.innerHTML = "";
+      const img =
+        document.createElement("img");
 
-    products.forEach(product => {
+      img.src = imageUrl;
+      img.alt = product.name || "محصول Lunéa";
+      img.loading = "lazy";
 
-      const name = product.name || "دسته‌گل لونیا";
+      img.onerror = function () {
 
-      const description =
-        product.description ||
-        "دسته‌گلی خاص و دوست‌داشتنی";
+        imageBox.innerHTML =
+          '<div class="emoji">🌷</div>';
 
-      const price =
-        product.price ||
-        "تماس بگیرید";
+      };
 
-      const image =
-        product.image ||
-        "🌷";
+      imageBox.appendChild(img);
 
-      let imageHTML = "";
+    } else {
 
-      if (
-        image.startsWith("http://") ||
-        image.startsWith("https://")
-      ) {
-
-        imageHTML = `
-          <img
-            src="${image}"
-            alt="${name}"
-            onerror="this.style.display='none'; this.parentElement.innerHTML='🌷';"
-          >
-        `;
-
-      } else {
-
-        imageHTML = image;
-
-      }
-
-      const message =
-        `سلام، برای سفارش «${name}» از سایت لونیا پیام می‌دم.`;
-
-      const whatsappURL =
-        `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}`;
-
-      const card = document.createElement("div");
-
-      card.className = "product";
-
-      card.innerHTML = `
-
-        <div class="product-image">
-          ${imageHTML}
-        </div>
-
-        <h3>${name}</h3>
-
-        <div class="description">
-          ${description}
-        </div>
-
-        <div class="price">
-          ${price}
-        </div>
-
-        <a
-          class="order-btn"
-          href="${whatsappURL}"
-          target="_blank"
-        >
-          سفارش در واتساپ
-        </a>
-
-      `;
-
-      container.appendChild(card);
-
-    });
-
-  }
-
-
-  /* =========================
-     دریافت محصولات از Google Sheets
-     ========================= */
-
-  async function loadProducts() {
-
-    try {
-
-      const response =
-        await fetch(CONFIG.sheetCsvUrl);
-
-      if (!response.ok) {
-        throw new Error("خطا در دریافت Google Sheets");
-      }
-
-      const csvText =
-        await response.text();
-
-      const products =
-        parseCSV(csvText);
-
-      const availableProducts =
-        products.filter(product => {
-
-          const available =
-            (product.available || "بله")
-              .trim()
-              .toLowerCase();
-
-          return ![
-            "خیر",
-            "no",
-            "false",
-            "0",
-            "ناموجود"
-          ].includes(available);
-
-        });
-
-      if (availableProducts.length > 0) {
-
-        renderProducts(availableProducts);
-
-      } else {
-
-        renderProducts(fallbackProducts);
-
-      }
+      imageBox.innerHTML =
+        '<div class="emoji">🌷</div>';
 
     }
 
-    catch (error) {
+    const content =
+      document.createElement("div");
 
-      console.error(error);
+    content.className = "card-content";
 
-      renderProducts(fallbackProducts);
+    const title =
+      document.createElement("h2");
 
-    }
+    title.textContent =
+      product.name || "دسته‌گل Lunéa";
 
-  }
+    const description =
+      document.createElement("p");
 
+    description.className = "description";
 
-  /* =========================
-     اجرای سایت
-     ========================= */
+    description.textContent =
+      product.description || "یک انتخاب زیبا و دوست‌داشتنی برای هدیه";
 
-  loadProducts();
+    const price =
+      document.createElement("div");
 
-</script>
+    price.className = "price";
 
-</body>
-</html>
+    price.textContent =
+      product.price || "برای اطلاع از قیمت پیام دهید";
+
+    const button =
+      document.createElement("a");
+
+    button.className = "order-btn";
+
+    button.target = "_blank";
+
+    const message =
+      `سلام، برای سفارش «${product.name || "دسته‌گل Lunéa"}» پیام می‌دهم.`;
+
+    button.href =
+      `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}`;
+
+    button.textContent
+```
