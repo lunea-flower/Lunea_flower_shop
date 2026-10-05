@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>مدیریت Lunéa</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -58,8 +59,16 @@
       font-weight: bold;
     }
 
+    button:hover {
+      opacity: .9;
+    }
+
     .logout {
       background: #777;
+    }
+
+    .delete {
+      background: #c85c6b;
     }
 
     .product {
@@ -70,10 +79,12 @@
     }
 
     .product img {
-      width: 120px;
-      height: 120px;
+      width: 150px;
+      height: 150px;
       object-fit: cover;
       border-radius: 12px;
+      display: block;
+      margin-bottom: 10px;
     }
 
     .actions {
@@ -83,10 +94,6 @@
 
     .actions button {
       width: 50%;
-    }
-
-    .delete {
-      background: #c85c6b;
     }
 
     #adminPanel {
@@ -99,6 +106,38 @@
       margin: 10px 0;
       white-space: pre-line;
     }
+
+    #productMessage {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+      white-space: pre-line;
+    }
+
+    .image-preview {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .file-label {
+      display: block;
+      background: #f4dce6;
+      color: #7d4960;
+      padding: 13px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    #imageFile {
+      display: none;
+    }
   </style>
 
 </head>
@@ -109,46 +148,118 @@
 
   <h1>🌸 مدیریت Lunéa</h1>
 
+  <!-- LOGIN -->
+
   <div id="loginBox" class="box">
-    <h2>ورود مدیر</h2>
 
 ```
-<input id="email" type="email" placeholder="ایمیل">
-<input id="password" type="password" placeholder="رمز عبور">
+<h2>ورود مدیر</h2>
 
-<button onclick="login()">ورود</button>
+<input
+  id="email"
+  type="email"
+  placeholder="ایمیل">
+
+<input
+  id="password"
+  type="password"
+  placeholder="رمز عبور">
+
+<button onclick="login()">
+  ورود
+</button>
 
 <div id="message"></div>
 ```
 
   </div>
 
+  <!-- ADMIN PANEL -->
+
   <div id="adminPanel">
 
 ```
-<div class="box">
-  <h2>افزودن محصول جدید</h2>
+<!-- ADD PRODUCT -->
 
-  <input id="name" placeholder="نام محصول">
-  <textarea id="description" placeholder="توضیحات محصول"></textarea>
-  <input id="price" placeholder="قیمت، مثلاً 3.600.000 تومان">
-  <input id="image" placeholder="آدرس عکس محصول">
+<div class="box">
+
+  <h2>➕ افزودن محصول جدید</h2>
+
+  <input
+    id="name"
+    placeholder="نام محصول">
+
+
+  <textarea
+    id="description"
+    placeholder="توضیحات محصول">
+  </textarea>
+
+
+  <input
+    id="price"
+    placeholder="قیمت، مثلاً 3.600.000 تومان">
+
+
+  <label class="file-label" for="imageFile">
+    📷 انتخاب عکس محصول
+  </label>
+
+  <input
+    id="imageFile"
+    type="file"
+    accept="image/*"
+    onchange="previewImage()">
+
+
+  <img
+    id="imagePreview"
+    class="image-preview">
+
 
   <label>
-    <input id="available" type="checkbox" checked>
+    <input
+      id="available"
+      type="checkbox"
+      checked>
+
     محصول موجود است
   </label>
 
-  <button onclick="addProduct()">➕ افزودن محصول</button>
+
+  <button onclick="addProduct()">
+    🌸 افزودن محصول
+  </button>
+
+
+  <div id="productMessage"></div>
+
 </div>
 
+
+<!-- PRODUCTS -->
+
 <div class="box">
-  <h2>محصولات فروشگاه</h2>
+
+  <h2>🌷 محصولات فروشگاه</h2>
+
   <div id="products"></div>
+
 </div>
 
+
+<!-- LOGOUT -->
+
 <div class="box">
-  <button class="logout" onclick="logout()">خروج از حساب</button>
+
+  <button
+    class="logout"
+    onclick="logout()">
+
+    خروج از حساب
+
+  </button>
+
 </div>
 ```
 
@@ -158,13 +269,15 @@
 
 <script>
 
+
+/* =========================
+   SUPABASE
+========================= */
+
 const SUPABASE_URL =
   "https://ajqvnvgjgrxuafxywzcd.supabase.co";
 
-/*
-  اینجا Publishable Key خودت را قرار بده.
-  کلید Secret یا service_role را قرار نده.
-*/
+
 const SUPABASE_KEY =
   "sb_publishable_44yJ8kRkUDBG3Nq6A94N-w_Ih7zLpaJ";
 
@@ -176,69 +289,74 @@ const supabaseClient =
   );
 
 
+/* =========================
+   LOGIN
+========================= */
+
 async function login() {
 
   const email =
-    document.getElementById("email").value.trim();
+    document
+      .getElementById("email")
+      .value
+      .trim();
 
   const password =
-    document.getElementById("password").value;
+    document
+      .getElementById("password")
+      .value;
+
 
   const message =
     document.getElementById("message");
 
-  if (!email || !password) {
-    message.textContent =
-      "⚠️ ایمیل و رمز عبور را وارد کن.";
-    return;
-  }
 
   message.textContent =
     "⏳ در حال ورود...";
 
+
   const { data, error } =
     await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
+
+      email,
+      password
+
     });
+
 
   if (error) {
 
-    console.error(error);
-
     message.textContent =
-      "❌ خطای ورود:\n" +
-      error.message;
+      "❌ " + error.message;
 
     return;
+
   }
 
-  if (!data.user) {
-
-    message.textContent =
-      "❌ کاربر پیدا نشد.";
-
-    return;
-  }
 
   await checkAdmin();
+
 }
 
+
+/* =========================
+   CHECK ADMIN
+========================= */
 
 async function checkAdmin() {
 
   const {
-    data: { user },
-    error: userError
-  } = await supabaseClient.auth.getUser();
+    data: { user }
+  } =
+    await supabaseClient.auth.getUser();
 
-  if (userError || !user) {
 
-    document.getElementById("message").textContent =
-      "❌ ورود انجام نشد.";
+  if (!user) {
 
     return;
+
   }
+
 
   const { data, error } =
     await supabaseClient
@@ -247,93 +365,331 @@ async function checkAdmin() {
       .eq("user_id", user.id)
       .maybeSingle();
 
+
   if (error) {
 
-    console.error(error);
-
-    document.getElementById("message").textContent =
-      "❌ خطا در بررسی دسترسی مدیر:\n" +
+    document
+      .getElementById("message")
+      .textContent =
+      "❌ خطا:\n" +
       error.message;
 
     return;
+
   }
+
 
   if (!data) {
 
     await supabaseClient.auth.signOut();
 
-    document.getElementById("message").textContent =
+    document
+      .getElementById("message")
+      .textContent =
       "❌ این حساب مدیر نیست.";
 
     return;
+
   }
 
-  document.getElementById("loginBox").style.display =
-    "none";
 
-  document.getElementById("adminPanel").style.display =
-    "block";
+  document
+    .getElementById("loginBox")
+    .style.display = "none";
+
+
+  document
+    .getElementById("adminPanel")
+    .style.display = "block";
+
 
   loadProducts();
+
 }
 
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+function previewImage() {
+
+  const file =
+    document
+      .getElementById("imageFile")
+      .files[0];
+
+
+  const preview =
+    document
+      .getElementById("imagePreview");
+
+
+  if (!file) {
+
+    preview.style.display = "none";
+
+    return;
+
+  }
+
+
+  const reader =
+    new FileReader();
+
+
+  reader.onload = function(e) {
+
+    preview.src = e.target.result;
+
+    preview.style.display = "block";
+
+  };
+
+
+  reader.readAsDataURL(file);
+
+}
+
+
+/* =========================
+   UPLOAD IMAGE
+========================= */
+
+async function uploadImage(file) {
+
+  if (!file) {
+
+    return null;
+
+  }
+
+
+  const fileExtension =
+    file.name
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+
+  const fileName =
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(36)
+      .substring(2) +
+    "." +
+    fileExtension;
+
+
+  const filePath =
+    fileName;
+
+
+  const { error } =
+    await supabaseClient
+      .storage
+      .from("product-images")
+      .upload(
+        filePath,
+        file,
+        {
+          cacheControl: "3600",
+          upsert: false
+        }
+      );
+
+
+  if (error) {
+
+    throw error;
+
+  }
+
+
+  const { data } =
+    supabaseClient
+      .storage
+      .from("product-images")
+      .getPublicUrl(filePath);
+
+
+  return data.publicUrl;
+
+}
+
+
+/* =========================
+   ADD PRODUCT
+========================= */
 
 async function addProduct() {
 
   const name =
-    document.getElementById("name").value.trim();
+    document
+      .getElementById("name")
+      .value
+      .trim();
+
 
   const description =
-    document.getElementById("description").value.trim();
+    document
+      .getElementById("description")
+      .value
+      .trim();
+
 
   const price =
-    document.getElementById("price").value.trim();
+    document
+      .getElementById("price")
+      .value
+      .trim();
 
-  const image =
-    document.getElementById("image").value.trim();
 
   const available =
-    document.getElementById("available").checked;
+    document
+      .getElementById("available")
+      .checked;
+
+
+  const imageFile =
+    document
+      .getElementById("imageFile")
+      .files[0];
+
+
+  const message =
+    document
+      .getElementById("productMessage");
+
 
   if (!name || !price) {
 
-    alert("نام محصول و قیمت را وارد کن.");
-
-    return;
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("products")
-      .insert({
-        name,
-        description,
-        price,
-        image,
-        available
-      });
-
-  if (error) {
-
     alert(
-      "خطا در افزودن محصول:\n" +
-      error.message
+      "نام محصول و قیمت را وارد کن."
     );
 
     return;
+
   }
 
-  alert("محصول با موفقیت اضافه شد 🌸");
 
-  document.getElementById("name").value = "";
-  document.getElementById("description").value = "";
-  document.getElementById("price").value = "";
-  document.getElementById("image").value = "";
-  document.getElementById("available").checked = true;
+  message.textContent =
+    "⏳ در حال افزودن محصول...";
 
-  loadProducts();
+
+  try {
+
+
+    let imageUrl = null;
+
+
+    /* UPLOAD IMAGE */
+
+    if (imageFile) {
+
+      message.textContent =
+        "📷 در حال آپلود عکس...";
+
+
+      imageUrl =
+        await uploadImage(imageFile);
+
+    }
+
+
+    /* INSERT PRODUCT */
+
+    message.textContent =
+      "🌸 در حال ذخیره محصول...";
+
+
+    const { error } =
+      await supabaseClient
+        .from("products")
+        .insert({
+
+          name: name,
+
+          description: description,
+
+          price: price,
+
+          image: imageUrl,
+
+          available: available
+
+        });
+
+
+    if (error) {
+
+      throw error;
+
+    }
+
+
+    message.textContent =
+      "✅ محصول با موفقیت اضافه شد 🌸";
+
+
+    /* CLEAR FORM */
+
+    document
+      .getElementById("name")
+      .value = "";
+
+
+    document
+      .getElementById("description")
+      .value = "";
+
+
+    document
+      .getElementById("price")
+      .value = "";
+
+
+    document
+      .getElementById("imageFile")
+      .value = "";
+
+
+    document
+      .getElementById("available")
+      .checked = true;
+
+
+    const preview =
+      document
+        .getElementById("imagePreview");
+
+
+    preview.src = "";
+
+    preview.style.display = "none";
+
+
+    loadProducts();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+
+    message.textContent =
+      "❌ خطا:\n" +
+      error.message;
+
+  }
+
 }
 
+
+/* =========================
+   LOAD PRODUCTS
+========================= */
 
 async function loadProducts() {
 
@@ -341,22 +697,27 @@ async function loadProducts() {
     await supabaseClient
       .from("products")
       .select("*")
-      .order("id", {
-        ascending: false
-      });
+      .order(
+        "id",
+        {
+          ascending: false
+        }
+      );
+
 
   const container =
     document.getElementById("products");
+
 
   if (error) {
 
     container.innerHTML =
       "<p>❌ خطا در دریافت محصولات</p>";
 
-    console.error(error);
-
     return;
+
   }
+
 
   if (!data || data.length === 0) {
 
@@ -364,30 +725,51 @@ async function loadProducts() {
       "<p>هنوز محصولی ثبت نشده است.</p>";
 
     return;
+
   }
+
 
   container.innerHTML = "";
 
+
   data.forEach(product => {
+
 
     const div =
       document.createElement("div");
 
-    div.className = "product";
+
+    div.className =
+      "product";
+
 
     div.innerHTML = `
 
       ${
         product.image
-        ? `<img src="${product.image}" alt="">`
-        : ""
+        ?
+        `<img
+          src="${product.image}"
+          alt="">`
+        :
+        ""
       }
 
-      <h3>${product.name}</h3>
 
-      <p>${product.description || ""}</p>
+      <h3>
+        ${product.name}
+      </h3>
 
-      <strong>${product.price}</strong>
+
+      <p>
+        ${product.description || ""}
+      </p>
+
+
+      <strong>
+        ${product.price}
+      </strong>
+
 
       <p>
         ${
@@ -397,32 +779,53 @@ async function loadProducts() {
         }
       </p>
 
+
       <div class="actions">
 
-        <button onclick="editProduct(${product.id})">
+        <button
+          onclick="editProduct(${product.id})">
+
           ✏️ ویرایش
+
         </button>
+
 
         <button
           class="delete"
           onclick="deleteProduct(${product.id})">
+
           🗑️ حذف
+
         </button>
 
       </div>
+
     `;
+
 
     container.appendChild(div);
 
   });
+
 }
 
 
+/* =========================
+   DELETE
+========================= */
+
 async function deleteProduct(id) {
 
-  if (!confirm("این محصول حذف شود؟")) {
+  if (
+    !confirm(
+      "این محصول حذف شود؟"
+    )
+  ) {
+
     return;
+
   }
+
 
   const { error } =
     await supabaseClient
@@ -430,44 +833,71 @@ async function deleteProduct(id) {
       .delete()
       .eq("id", id);
 
+
   if (error) {
 
     alert(
-      "خطا در حذف محصول:\n" +
+      "خطا در حذف:\n" +
       error.message
     );
 
     return;
+
   }
 
+
   loadProducts();
+
 }
 
+
+/* =========================
+   EDIT
+========================= */
 
 async function editProduct(id) {
 
   const newName =
-    prompt("نام جدید محصول:");
+    prompt(
+      "نام جدید محصول:"
+    );
+
 
   if (newName === null) {
+
     return;
+
   }
+
 
   const newPrice =
-    prompt("قیمت جدید:");
+    prompt(
+      "قیمت جدید:"
+    );
+
 
   if (newPrice === null) {
+
     return;
+
   }
+
 
   const { error } =
     await supabaseClient
       .from("products")
       .update({
+
         name: newName,
+
         price: newPrice
+
       })
-      .eq("id", id);
+      .eq(
+        "id",
+        id
+      );
+
 
   if (error) {
 
@@ -477,19 +907,34 @@ async function editProduct(id) {
     );
 
     return;
+
   }
 
+
   loadProducts();
+
 }
 
+
+/* =========================
+   LOGOUT
+========================= */
 
 async function logout() {
 
-  await supabaseClient.auth.signOut();
+  await supabaseClient
+    .auth
+    .signOut();
+
 
   location.reload();
+
 }
 
+
+/* =========================
+   START
+========================= */
 
 checkAdmin();
 
