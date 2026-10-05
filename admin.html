@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مدیریت Lunéa</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff8fb;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #b76e8a;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.08);
+      margin-bottom: 25px;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      background: #b76e8a;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: .9;
+    }
+
+    .logout {
+      background: #777;
+    }
+
+    .product {
+      border: 1px solid #eee;
+      border-radius: 15px;
+      padding: 15px;
+      margin-top: 15px;
+    }
+
+    .product img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .actions button {
+      width: 50%;
+    }
+
+    .delete {
+      background: #c85c6b;
+    }
+
+    #adminPanel {
+      display: none;
+    }
+
+    #message {
+      text-align: center;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🌸 مدیریت Lunéa</h1>
+
+  <div id="loginBox" class="box">
+    <h2>ورود مدیر</h2>
+
+    <input id="email" type="email" placeholder="ایمیل">
+    <input id="password" type="password" placeholder="رمز عبور">
+
+    <button onclick="login()">ورود</button>
+
+    <div id="message"></div>
+  </div>
+
+
+  <div id="adminPanel">
+
+    <div class="box">
+      <h2>افزودن محصول جدید</h2>
+
+      <input id="name" placeholder="نام محصول">
+      <textarea id="description" placeholder="توضیحات محصول"></textarea>
+      <input id="price" placeholder="قیمت، مثلاً 3.600.000 تومان">
+      <input id="image" placeholder="آدرس عکس محصول">
+
+      <label>
+        <input id="available" type="checkbox" checked>
+        محصول موجود است
+      </label>
+
+      <button onclick="addProduct()">➕ افزودن محصول</button>
+
+      <div id="productMessage"></div>
+    </div>
+
+
+    <div class="box">
+      <h2>محصولات فروشگاه</h2>
+      <div id="products"></div>
+    </div>
+
+    <div class="box">
+      <button class="logout" onclick="logout()">خروج از حساب</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL = "https://ajqvnvgjgrxuafxywzcd.supabase.co";
+
+/*
+  اینجا باید Publishable Key خودت را قرار بدهی.
+  کلیدی که قبلاً از Supabase کپی کردی را بین دو " قرار بده.
+*/
+const SUPABASE_KEY = "اینجا کلید Publishable را قرار بده";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+async function login() {
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const message =
+    document.getElementById("message");
+
+  message.textContent = "در حال ورود...";
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if (error) {
+    message.textContent =
+      "❌ ایمیل یا رمز عبور اشتباه است.";
+    return;
+  }
+
+  await checkAdmin();
+
+}
+
+
+async function checkAdmin() {
+
+  const {
+    data: { user }
+  } = await supabaseClient.auth.getUser();
+
+  if (!user) {
+    return;
+  }
+
+  const { data, error } =
+    await supabaseClient
+      .from("admins")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+  if (error || !data) {
+
+    await supabaseClient.auth.signOut();
+
+    document.getElementById("message").textContent =
+      "❌ این حساب دسترسی مدیریت ندارد.";
+
+    return;
+  }
+
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("adminPanel").style.display = "block";
+
+  loadProducts();
+}
+
+
+async function addProduct() {
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const description =
+    document.getElementById("description").value.trim();
+
+  const price =
+    document.getElementById("price").value.trim();
+
+  const image =
+    document.getElementById("image").value.trim();
+
+  const available =
+    document.getElementById("available").checked;
+
+  if (!name || !price) {
+    alert("نام محصول و قیمت را وارد کن.");
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("products")
+      .insert({
+        name,
+        description,
+        price,
+        image,
+        available
+      });
+
+  if (error) {
+
+    alert("خطا در افزودن محصول:\n" + error.message);
+    return;
+
+  }
+
+  alert("محصول با موفقیت اضافه شد 🌸");
+
+  document.getElementById("name").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("image").value = "";
+  document.getElementById("available").checked = true;
+
+  loadProducts();
+}
+
+
+async function loadProducts() {
+
+  const { data, error } =
+    await supabaseClient
+      .from("products")
+      .select("*")
+      .order("id", { ascending: false });
+
+  const container =
+    document.getElementById("products");
+
+  if (error) {
+
+    container.innerHTML =
+      "<p>خطا در دریافت محصولات</p>";
+
+    return;
+  }
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      "<p>هنوز محصولی ثبت نشده است.</p>";
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  data.forEach(product => {
+
+    const div =
+      document.createElement("div");
+
+    div.className = "product";
+
+    div.innerHTML = `
+      ${
+        product.image
+        ? `<img src="${product.image}" alt="${product.name}">`
+        : ""
+      }
+
+      <h3>${product.name}</h3>
+
+      <p>${product.description || ""}</p>
+
+      <strong>${product.price}</strong>
+
+      <p>
+        ${
+          product.available
+          ? "✅ موجود"
+          : "❌ ناموجود"
+        }
+      </p>
+
+      <div class="actions">
+
+        <button onclick="editProduct(${product.id})">
+          ✏️ ویرایش
+        </button>
+
+        <button class="delete"
+          onclick="deleteProduct(${product.id})">
+          🗑️ حذف
+        </button>
+
+      </div>
+    `;
+
+    container.appendChild(div);
+
+  });
+
+}
+
+
+async function deleteProduct(id) {
+
+  if (!confirm("این محصول حذف شود؟")) {
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("products")
+      .delete()
+      .eq("id", id);
+
+  if (error) {
+
+    alert("خطا در حذف محصول:\n" + error.message);
+    return;
+
+  }
+
+  loadProducts();
+}
+
+
+async function editProduct(id) {
+
+  const newName =
+    prompt("نام جدید محصول:");
+
+  if (newName === null) {
+    return;
+  }
+
+  const newPrice =
+    prompt("قیمت جدید:");
+
+  if (newPrice === null) {
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("products")
+      .update({
+        name: newName,
+        price: newPrice
+      })
+      .eq("id", id);
+
+  if (error) {
+
+    alert("خطا در ویرایش:\n" + error.message);
+    return;
+
+  }
+
+  loadProducts();
+}
+
+
+async function logout() {
+
+  await supabaseClient.auth.signOut();
+
+  location.reload();
+
+}
+
+
+checkAdmin();
+
+</script>
+
+</body>
+</html>
